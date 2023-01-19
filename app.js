@@ -1,35 +1,27 @@
-const express = require("express");
-const morgan = require("morgan");
-const path = require("path");
-const views = require("./views");
-const { db, User, Page } = require("./models/index");
-
+const express = require('express');
+const morgan = require('morgan');
+const path = require('path');
+const views = require('./views');
+const { db, User, Page } = require('./models/index');
 const app = express();
+
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(morgan('dev'));
 
-app.use("/routes", require("./routes"));
-
-app.use(morgan("dev"));
-
-app.get("/", (req, res) => {
-  res.send(views.addPage());
-});
+app.use('/', require('./routes'));
 
 db.authenticate().then(() => {
-  console.log("connected to the database");
-});
-
-app.get("/wiki", (req, res) => {
-  res.send("Hi");
+  console.log('connected to the database');
 });
 
 const init = async () => {
   await db.sync();
-  // await User.create({ name: "abc", email: "abc@example.com" });
+  // await User.create({ name: 'abc', email: 'abc@example.com' });
 
-  app.listen("1337", (req, res) => {
-    console.log("listening on port 1337");
+  const PORT = 8000;
+  app.listen(PORT, (req, res) => {
+    console.log(`listening on port ${PORT}`);
   });
 };
 
